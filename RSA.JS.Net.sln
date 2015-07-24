@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSAEncrypt.Net", "RSAEncrypt.Net\RSAEncrypt.Net.csproj", "{E393030C-4CEE-41FA-A426-00D93F3775BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RSA.JS.Net.Web", "RSA.JS.Net.Web\RSA.JS.Net.Web.csproj", "{44D0F69B-38F7-4181-AB0D-CB76991CEFA7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E393030C-4CEE-41FA-A426-00D93F3775BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E393030C-4CEE-41FA-A426-00D93F3775BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E393030C-4CEE-41FA-A426-00D93F3775BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E393030C-4CEE-41FA-A426-00D93F3775BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{44D0F69B-38F7-4181-AB0D-CB76991CEFA7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{44D0F69B-38F7-4181-AB0D-CB76991CEFA7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{44D0F69B-38F7-4181-AB0D-CB76991CEFA7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{44D0F69B-38F7-4181-AB0D-CB76991CEFA7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

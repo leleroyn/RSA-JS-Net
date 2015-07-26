@@ -14,20 +14,17 @@ namespace RSA.JS.Net.Web.Account
         protected string strPublicKeyModulus;
         protected void Page_Load(object sender, EventArgs e)
         {
-            if (!IsPostBack)
-            {
-                RegisterHyperLink.NavigateUrl = "Register.aspx?ReturnUrl=" + HttpUtility.UrlEncode(Request.QueryString["ReturnUrl"]);
-                RSAEncryptProvider rsaEncryptProvider = new RSAEncryptProvider("login");
-                strPublicKeyExponent = rsaEncryptProvider.RSAExponent;
-                strPublicKeyModulus = rsaEncryptProvider.RSAModulus;
-            }
+            RegisterHyperLink.NavigateUrl = "Register.aspx?ReturnUrl=" + HttpUtility.UrlEncode(Request.QueryString["ReturnUrl"]);
+            RSAEncryptProvider rsaEncryptProvider = new RSAEncryptProvider("login");
+            strPublicKeyExponent = rsaEncryptProvider.RSAExponent;
+            strPublicKeyModulus = rsaEncryptProvider.RSAModulus;
         }
 
         protected void LoginButton_Click(object sender, EventArgs e)
         {
             RSAEncryptProvider rsaEncryptProvider = new RSAEncryptProvider("login");
             string pwd = Request.Form["Password"];
-            string realPwd = rsaEncryptProvider.Decrypt(pwd,true);           
+            string realPwd = rsaEncryptProvider.Decrypt(pwd, true);
         }
     }
 }

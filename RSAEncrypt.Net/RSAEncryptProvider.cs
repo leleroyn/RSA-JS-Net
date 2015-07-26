@@ -10,9 +10,8 @@ namespace RSAEncrypt.Net
     public class RSAEncryptProvider
     {
         private static object lockobj = new object();
-        private static  Dictionary<string,RSACryptoServiceProvider> RSAServiceSet = new Dictionary<string, RSACryptoServiceProvider>();
 
-        private RSACryptoServiceProvider rsa = null ;
+        private RSACryptoServiceProvider rsa = null;
         /// <summary>
         /// 实例名称
         /// </summary>
@@ -23,20 +22,28 @@ namespace RSAEncrypt.Net
         }
 
         #region 构造函数
-        private RSAEncryptProvider(){}
+        private RSAEncryptProvider() { }
         public RSAEncryptProvider(string instanceName)
+            : this(instanceName, HttpContext.Current.Session.SessionID)
         {
-            InstanceName = string.Join("#", HttpContext.Current.Session.SessionID, instanceName);
-            if (RSAServiceSet.Keys.Contains(InstanceName))
+        }
+        public RSAEncryptProvider(string instanceName, string sessionId)
+            : this(instanceName, HttpContext.Current.Session.SessionID, 5)
+        {
+        }
+        public RSAEncryptProvider(string instanceName, string sessionId, int expireMinutes)
+        {
+            InstanceName = string.Join("#", sessionId, instanceName);
+            if (HttpRuntime.Cache.Get(InstanceName) != null)
             {
-                rsa = RSAServiceSet[InstanceName];
+                rsa = HttpRuntime.Cache.Get(InstanceName) as RSACryptoServiceProvider;
             }
             else
             {
                 lock (lockobj)
                 {
                     rsa = new RSACryptoServiceProvider();
-                    RSAServiceSet.Add(InstanceName, rsa);
+                    HttpRuntime.Cache.Insert(InstanceName, rsa, null, DateTime.Now.AddMinutes(expireMinutes), System.Web.Caching.Cache.NoSlidingExpiration);
                 }
             }
         }
@@ -48,11 +55,11 @@ namespace RSAEncrypt.Net
         /// <param name="secretStr"></param>
         /// <param name="complate"></param>
         /// <returns></returns>
-        public string Decrypt(string secretStr,bool complate= true)
+        public string Decrypt(string secretStr, bool complete = true)
         {
             byte[] result = rsa.Decrypt(HexStringToBytes(secretStr), false);
             System.Text.ASCIIEncoding enc = new ASCIIEncoding();
-            if (complate)
+            if (complete)
             {
                 this.Complete();
             }
@@ -61,21 +68,13 @@ namespace RSAEncrypt.Net
 
         public void Complete()
         {
-            if (RSAServiceSet.Keys.Contains(InstanceName))
+            lock (lockobj)
             {
-                lock (lockobj)
-                {
-                    RSAServiceSet.Remove(InstanceName);
-                }
+                HttpRuntime.Cache.Remove(InstanceName);
             }
         }
 
-        public void Clear()
-        {
-            RSAServiceSet.Clear();
-        }
-
-        public  string RSAExponent
+        public string RSAExponent
         {
             get
             {

@@ -28,7 +28,7 @@ namespace RSAEncrypt.Net
         {
         }
         public RSAEncryptProvider(string instanceName, string sessionId)
-            : this(instanceName, HttpContext.Current.Session.SessionID, 5)
+            : this(instanceName, HttpContext.Current.Session.SessionID, 15)
         {
         }
         public RSAEncryptProvider(string instanceName, string sessionId, int expireMinutes)
@@ -55,15 +55,25 @@ namespace RSAEncrypt.Net
         /// <param name="secretStr"></param>
         /// <param name="complate"></param>
         /// <returns></returns>
-        public string Decrypt(string secretStr, bool complete = true)
+        public bool TryDecrypt(string secretStr, out string realValue, bool complete = true)
         {
-            byte[] result = rsa.Decrypt(HexStringToBytes(secretStr), false);
-            System.Text.ASCIIEncoding enc = new ASCIIEncoding();
-            if (complete)
+            try
             {
-                this.Complete();
+                byte[] result = rsa.Decrypt(HexStringToBytes(secretStr), false);
+                System.Text.ASCIIEncoding enc = new ASCIIEncoding();
+                realValue = enc.GetString(result);
+                if (complete)
+                {
+                    this.Complete();
+                }
+                return true;
             }
-            return enc.GetString(result);
+            catch (Exception)
+            {
+                realValue = null;
+                return false;
+            }
+           
         }
 
         public void Complete()

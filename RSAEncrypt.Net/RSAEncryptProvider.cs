@@ -11,42 +11,19 @@ namespace RSAEncrypt.Net
     {
         private static object lockobj = new object();
 
-        private RSACryptoServiceProvider rsa = null;
-        /// <summary>
-        /// 实例名称
-        /// </summary>
-        public string InstanceName
-        {
-            get;
-            private set;
-        }
+        private static RSACryptoServiceProvider rsa ;    
 
         #region 构造函数
-        private RSAEncryptProvider() { }
-        public RSAEncryptProvider(string instanceName)
-            : this(instanceName, HttpContext.Current.Session.SessionID)
-        {
-        }
-        public RSAEncryptProvider(string instanceName, string sessionId)
-            : this(instanceName, HttpContext.Current.Session.SessionID, 15)
-        {
-        }
-        public RSAEncryptProvider(string instanceName, string sessionId, int expireMinutes)
-        {
-            InstanceName = string.Join("#", sessionId, instanceName);
-            if (HttpRuntime.Cache.Get(InstanceName) != null)
+        public RSAEncryptProvider() {
+            lock (lockobj)
             {
-                rsa = HttpRuntime.Cache.Get(InstanceName) as RSACryptoServiceProvider;
-            }
-            else
-            {
-                lock (lockobj)
+                if (rsa == null)
                 {
                     rsa = new RSACryptoServiceProvider();
-                    HttpRuntime.Cache.Insert(InstanceName, rsa, null, DateTime.Now.AddMinutes(expireMinutes), System.Web.Caching.Cache.NoSlidingExpiration);
                 }
             }
-        }
+        } 
+
         #endregion
 
         /// <summary>
@@ -61,11 +38,7 @@ namespace RSAEncrypt.Net
             {
                 byte[] result = rsa.Decrypt(HexStringToBytes(secretStr), false);
                 System.Text.ASCIIEncoding enc = new ASCIIEncoding();
-                realValue = enc.GetString(result);
-                if (complete)
-                {
-                    this.Complete();
-                }
+                realValue = enc.GetString(result);               
                 return true;
             }
             catch (Exception)
@@ -74,15 +47,7 @@ namespace RSAEncrypt.Net
                 return false;
             }
            
-        }
-
-        public void Complete()
-        {
-            lock (lockobj)
-            {
-                HttpRuntime.Cache.Remove(InstanceName);
-            }
-        }
+        }     
 
         public string RSAExponent
         {
@@ -101,6 +66,15 @@ namespace RSAEncrypt.Net
                 return BytesToHexString(parameter.Modulus);
             }
         }
+
+        /// <summary>
+        /// 公钥
+        /// </summary>
+        public string PublicKey
+        {
+            get { return rsa.ToXmlString(false); }
+        }
+
         private string BytesToHexString(byte[] input)
         {
             StringBuilder hexString = new StringBuilder(64);

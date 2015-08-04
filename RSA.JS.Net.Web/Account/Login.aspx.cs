@@ -25,7 +25,7 @@ namespace RSA.JS.Net.Web.Account
             RSAEncryptProvider rsaEncryptProvider = new RSAEncryptProvider();
             string pwd = Request.Form["Password"];
             string realPwd = string.Empty;
-            rsaEncryptProvider.TryDecrypt(pwd, out realPwd, true);
+            rsaEncryptProvider.TryDecrypt(pwd, out realPwd);
         }
     }
 }

@@ -11,18 +11,19 @@ namespace RSAEncrypt.Net
     {
         private static object lockobj = new object();
 
-        private static RSACryptoServiceProvider rsa ;    
+        private static RSACryptoServiceProvider rsa;
 
         #region 构造函数
-        public RSAEncryptProvider() {
-            lock (lockobj)
+        public RSAEncryptProvider()
+        {
+            if (rsa == null)
             {
-                if (rsa == null)
+                lock (lockobj)
                 {
                     rsa = new RSACryptoServiceProvider();
                 }
             }
-        } 
+        }
 
         #endregion
 
@@ -32,13 +33,13 @@ namespace RSAEncrypt.Net
         /// <param name="secretStr"></param>
         /// <param name="complate"></param>
         /// <returns></returns>
-        public bool TryDecrypt(string secretStr, out string realValue, bool complete = true)
+        public bool TryDecrypt(string secretStr, out string realValue)
         {
             try
             {
                 byte[] result = rsa.Decrypt(HexStringToBytes(secretStr), false);
                 System.Text.ASCIIEncoding enc = new ASCIIEncoding();
-                realValue = enc.GetString(result);               
+                realValue = enc.GetString(result);
                 return true;
             }
             catch (Exception)
@@ -46,8 +47,8 @@ namespace RSAEncrypt.Net
                 realValue = null;
                 return false;
             }
-           
-        }     
+
+        }
 
         public string RSAExponent
         {

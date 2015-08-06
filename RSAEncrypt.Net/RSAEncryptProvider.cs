@@ -44,7 +44,6 @@ namespace RSAEncrypt.Net
             }
             catch (Exception)
             {
-                realValue = null;
                 return false;
             }
 
